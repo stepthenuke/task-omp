@@ -8,7 +8,7 @@ src = [
 sdbus_dep = dependency('sdbus-c++', required: true)
 
 libservice = shared_library(
-   'libservice',
+   'dbus_service',
    src,
    version: '0.1337',
    soversion: 0,

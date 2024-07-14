@@ -14,7 +14,7 @@ class SharingService final : public IElementaryService {
 public:
    template <typename Callable>
    SharingService(const std::string &name, const std::vector<std::string> &supportedFormats, Callable &&handler)
-      : IElementaryService(name, "/"), supportedFormats_{supportedFormats}, handler_{std::forward(handler)} {}
+      : IElementaryService(name, "/"), supportedFormats_{supportedFormats}, handler_{std::move(handler)} {}
 
    SharingService(SharingService &&) = default;
    SharingService &operator=(SharingService &&) = default;

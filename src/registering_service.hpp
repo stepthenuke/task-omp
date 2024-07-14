@@ -38,15 +38,11 @@ public:
    void start() override;
 
 private:
-   template <typename Callable>
-   void registerMethod(const std::string &name, Callable &&handler);
-
-private:
    detail::FormatServiceDict serviceDict_;
 
-   void registerFileHandler(const std::string &name, const std::vector<std::string> &supportedFormats);
-   void openFileHandler_(const std::string &path);
-   void openFileUsingServiceHandler_(const std::string &);
+   void registerServiceHandler(const std::string &name, const std::vector<std::string> &supportedFormats);
+   void openFileHandler(const std::string &path);
+   void openFileUsingServiceHandler(const std::string &path, const std::string &service);
 };
 
 } // namespace shr

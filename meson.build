@@ -6,4 +6,10 @@ project(
 )
 
 subdir('src')
-subdir('test')
+subdir('samples')
+
+executable(
+  'driver',
+  'src/driver.cpp',
+  dependencies: libservice_dep
+)

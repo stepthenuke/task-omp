@@ -1,5 +1,4 @@
 src = [
-   'common.cpp',
    'registering_service.cpp',
    'service.cpp',
    'sharing_service.cpp'

@@ -1,10 +1,9 @@
 #include <iostream>
-
 #include <src/libservice.hpp>
 
 int main() {
-   std::cout << "registering\n";
+  std::cout << "registering\n";
 
-   shr::RegisteringService regService;
-   regService.start();
+  shr::RegisteringService regService;
+  regService.start();
 }

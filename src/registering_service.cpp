@@ -1,5 +1,6 @@
 #include "registering_service.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <iostream>
 
@@ -11,20 +12,48 @@ namespace detail {
 
 std::optional<std::string> FormatServiceDict::findService(
     const std::string& format) {
-  auto it = data_.find(format);
-  if (it == data_.end()) {
+  auto it = formatServiceMap_.find(format);
+  if (it == formatServiceMap_.end()) {
     return std::nullopt;
   }
   // formally, it's a random service
   return {it->second.front()};
 }
 
-void FormatServiceDict::pushService(
+void FormatServiceDict::addService(
     const std::string& serviceName,
     const std::vector<std::string>& supportedFormats) {
-  std::for_each(
-      supportedFormats.begin(), supportedFormats.end(),
-      [&](auto&& format) { data_["." + format].push_back(serviceName); });
+  serviceFormatMap_.emplace(serviceName, supportedFormats);
+  std::for_each(supportedFormats.begin(), supportedFormats.end(),
+                [&](auto&& format) {
+                  formatServiceMap_[format].push_back(serviceName);
+                });
+}
+
+bool FormatServiceDict::removeService(const std::string& serviceName) {
+  auto it = serviceFormatMap_.find(serviceName);
+  if (it == serviceFormatMap_.end()) {
+    return false;
+  }
+  auto& formatsToDelete = it->second;
+  std::for_each(formatsToDelete.begin(), formatsToDelete.end(),
+                [this, serviceName](auto&& format) {
+                  this->removeServiceFromFormatMap(format, serviceName);
+                });
+  serviceFormatMap_.erase(it);
+  return true;
+}
+
+void FormatServiceDict::removeServiceFromFormatMap(
+    const std::string& format, const std::string& serviceName) {
+  std::deque<std::string>& servicesToRemoveFrom = formatServiceMap_[format];
+  servicesToRemoveFrom.erase(
+      std::remove(servicesToRemoveFrom.begin(), servicesToRemoveFrom.end(),
+                  serviceName),
+      servicesToRemoveFrom.end());
+  if (formatServiceMap_[format].size() == 0) {
+    formatServiceMap_.erase(format);
+  }
 }
 
 }  // namespace detail
@@ -63,7 +92,7 @@ void RegisteringService::start() {
 
 void RegisteringService::registerServiceHandler(
     const std::string& name, const std::vector<std::string>& supportedFormats) {
-  serviceDict_.pushService(name, supportedFormats);
+  serviceDict_.addService(name, supportedFormats);
 }
 
 void RegisteringService::openFileHandler(const std::string& path) {

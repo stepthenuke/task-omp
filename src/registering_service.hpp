@@ -3,6 +3,7 @@
 
 #include <sdbus-c++/sdbus-c++.h>
 
+#include <deque>
 #include <memory>
 #include <optional>
 #include <string>
@@ -16,11 +17,18 @@ namespace detail {
 class FormatServiceDict {
  public:
   std::optional<std::string> findService(const std::string& format);
-  void pushService(const std::string& serviceName,
-                   const std::vector<std::string>& supportedFormats);
+  void addService(const std::string& serviceName,
+                  const std::vector<std::string>& supportedFormats);
+  bool removeService(const std::string& serviceName);
 
  private:
-  std::unordered_map<std::string, std::vector<std::string>> data_;
+  void removeServiceFromFormatMap(const std::string& format,
+                                  const std::string& serviceName);
+
+ private:
+  std::unordered_map<std::string, std::vector<std::string>> serviceFormatMap_;
+  // deque is used as we need to delete inside elements
+  std::unordered_map<std::string, std::deque<std::string>> formatServiceMap_;
 };
 
 }  // namespace detail

@@ -5,7 +5,7 @@
 namespace shr {
 
 void SharingService::start() {
-  auto [connection, object] =
+  const auto [connection, object] =
       detail::setupSessionConnection(name_, objectPath_);
   object
       ->addVTable(sdbus::registerMethod("OpenFile")
@@ -14,9 +14,9 @@ void SharingService::start() {
       .forInterface(name_);
 
   const auto regServiceName = "com.system.sharing";
-  auto regServiceProxy = sdbus::createProxy(sdbus::ServiceName{regServiceName},
-                                            sdbus::ObjectPath{"/"});
-  sdbus::InterfaceName regServiceIface{regServiceName};
+  const auto regServiceProxy = sdbus::createProxy(
+      sdbus::ServiceName{regServiceName}, sdbus::ObjectPath{"/"});
+  const sdbus::InterfaceName regServiceIface{regServiceName};
   try {
     regServiceProxy->callMethod("RegisterService")
         .onInterface(regServiceIface)

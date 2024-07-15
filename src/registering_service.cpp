@@ -58,19 +58,19 @@ void FormatServiceDict::removeServiceFromFormatMap(
 }  // namespace detail
 
 void RegisteringService::start() {
-  auto [connection, object] =
+  const auto [connection, object] =
       detail::setupSessionConnection(name_, objectPath_);
 
-  auto registerService = [this](
-                             const std::string& name,
-                             const std::vector<std::string>& supportedFormats) {
-    return this->registerServiceHandler(name, supportedFormats);
-  };
-  auto openFile = [this](const std::string& path) {
+  const auto registerService =
+      [this](const std::string& name,
+             const std::vector<std::string>& supportedFormats) {
+        return this->registerServiceHandler(name, supportedFormats);
+      };
+  const auto openFile = [this](const std::string& path) {
     return this->openFileHandler(path);
   };
-  auto openFileUsingService = [this](const std::string& path,
-                                     const std::string& service) {
+  const auto openFileUsingService = [this](const std::string& path,
+                                           const std::string& service) {
     return this->openFileUsingServiceHandler(path, service);
   };
 
@@ -96,9 +96,9 @@ void RegisteringService::registerServiceHandler(
 
 void RegisteringService::openFileHandler(const std::string& path) {
   // file path correction checking is a concern of a client
-  fs::path fPath{path};
-  auto format = fPath.extension().string();
-  auto serviceName = serviceDict_.findService(format);
+  const fs::path fPath{path};
+  const auto format = fPath.extension().string();
+  const auto serviceName = serviceDict_.findService(format);
   if (!serviceName.has_value()) {
     throwError(
         name_, "OpenFile",
@@ -117,9 +117,9 @@ void RegisteringService::openFileHandler(const std::string& path) {
 
 void RegisteringService::openFileUsingServiceHandler(
     const std::string& path, const std::string& service) {
-  auto serviceProxy =
+  const auto serviceProxy =
       sdbus::createProxy(sdbus::ServiceName(service), sdbus::ObjectPath("/"));
-  sdbus::InterfaceName interface { service };
+  const sdbus::InterfaceName interface { service };
   serviceProxy->callMethod("OpenFile")
       .onInterface(interface)
       .withArguments(path);

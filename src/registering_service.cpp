@@ -24,10 +24,9 @@ void FormatServiceDict::addService(
     const std::string& serviceName,
     const std::vector<std::string>& supportedFormats) {
   serviceFormatMap_.emplace(serviceName, supportedFormats);
-  std::for_each(supportedFormats.begin(), supportedFormats.end(),
-                [&](auto&& format) {
-                  formatServiceMap_[format].push_back(serviceName);
-                });
+  std::for_each(
+      supportedFormats.begin(), supportedFormats.end(),
+      [&](auto&& format) { formatServiceMap_[format].push_back(serviceName); });
 }
 
 bool FormatServiceDict::removeService(const std::string& serviceName) {
@@ -105,7 +104,15 @@ void RegisteringService::openFileHandler(const std::string& path) {
         name_, "OpenFile",
         "There is no suitable service running for opening file " + path + ".");
   }
-  openFileUsingServiceHandler(path, *serviceName);
+  try {
+    openFileUsingServiceHandler(path, *serviceName);
+  } catch (const sdbus::Error& error) {
+    if (error.getName() != "org.freedesktop.DBus.Error.ServiceUnknown") {
+      throw;
+    }
+    serviceDict_.removeService(*serviceName);
+    openFileHandler(path);
+  }
 }
 
 void RegisteringService::openFileUsingServiceHandler(
@@ -113,13 +120,9 @@ void RegisteringService::openFileUsingServiceHandler(
   auto serviceProxy =
       sdbus::createProxy(sdbus::ServiceName(service), sdbus::ObjectPath("/"));
   sdbus::InterfaceName interface { service };
-  try {
-    serviceProxy->callMethod("OpenFile")
-        .onInterface(interface)
-        .withArguments(path);
-  } catch (const sdbus::Error& error) {
-    std::cerr << error.what() << std::endl;
-  }
+  serviceProxy->callMethod("OpenFile")
+      .onInterface(interface)
+      .withArguments(path);
 }
 
 }  // namespace shr

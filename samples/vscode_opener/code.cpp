@@ -9,11 +9,11 @@ void printFile(const std::string& path);
 
 int main() {
   const std::string serviceName{"me.nesoft.code"};
-  const std::vector<std::string> supportedFormats{".c", ".cpp", ".h", ".hpp", ""};
+  const std::vector<std::string> supportedFormats{".c", ".cpp", ".h", ".hpp",
+                                                  ""};
 
   auto onOpenFile = [](const std::string& path) {
     const std::string command = "code " + path;
-    std::cout << command << "\n";
     std::system(command.c_str());
   };
 

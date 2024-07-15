@@ -12,7 +12,8 @@ void printFile(const std::string& path);
 
 int main() {
   const std::string serviceName{"org.asdf.catter"};
-  const std::vector<std::string> supportedFormats{".txt", ".text", ".info"};
+  const std::vector<std::string> supportedFormats{".txt", ".text", ".info",
+                                                  ".c"};
 
   auto onOpenFile = [&](const std::string& path) {
     if (!checkPath(path)) {

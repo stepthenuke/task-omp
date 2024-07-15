@@ -2,10 +2,13 @@ src = [
    'common.cpp',
    'registering_service.cpp',
    'service.cpp',
-   'sharing_service.cpp',
+   'sharing_service.cpp'
 ]
 
-sdbus_dep = dependency('sdbus-c++', required: true)
+sdbus_dep = dependency(
+   'sdbus-c++', 
+   required: true
+)
 
 libservice = shared_library(
    'dbus_service',

@@ -5,7 +5,8 @@
 int main() {
    std::cout << "sharing\n";
 
-   auto onOpenFile = [] (const std::string &path) {
+   const auto name = "com.asdf.music";
+   auto onOpenFile = [&] (const std::string &path) {
       std::cout << "Opened file: " << path << std::endl;
    };
 

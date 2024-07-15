@@ -15,6 +15,8 @@ setupSessionConnection(const std::string &serviceName, const std::string &object
 
 } // namespace detail
 
+void throwError(const std::string &serviceName, const std::string &methodName, const std::string &message);
+
 // Minimal interface for a DBus service.
 class IService {
 public:
@@ -33,9 +35,6 @@ protected:
 // Interface for a service with single connection, object, and interface (name = interface).
 // More concretely -- base for both SharingService and RegisteringService
 class IElementaryService : public IService {
-public:
-   virtual ~IElementaryService() = default;
-
 protected:
    IElementaryService(const std::string &name, const std::string &objectPath)
       : IService(name), objectPath_(objectPath) {}

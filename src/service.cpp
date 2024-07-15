@@ -13,4 +13,9 @@ setupSessionConnection(const std::string &serviceName, const std::string &object
 
 } // namespace detail
 
+void throwError(const std::string &serviceName, const std::string &methodName, const std::string &message) {
+   sdbus::Error::Name errorName{serviceName + "." + methodName + ".Error"};
+   throw sdbus::Error{errorName, message};
+}
+
 } // namespace shr

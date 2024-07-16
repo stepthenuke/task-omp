@@ -2,7 +2,7 @@ Test task OMP
 ================
 
 This library simplifies creating a central service called `"com.system.sharing"` on DBus. 
-This service acts as a middleman, forwarding requests to open files to appropriate registered services.
+This service acts as a middleman, forwarding requests to open files to appropriate registered services which can be created with the help of the library.
 
 The library has only one dependency [sdbus-c++](https://github.com/Kistler-Group/sdbus-cpp).
 
@@ -31,7 +31,8 @@ The service provides three methods:
 
    Method allows to call `OpenFile` method of specific `service`.
 
-All services created with library use the same object path `"/"`. 
+All services created with library use the same object path `"/"`. Interface matches
+with service name.
 
 ### Usage
 Basic example:
@@ -45,12 +46,18 @@ int main() {
       }
       process(path);
    };
-   shr::SharingService service {};
+   shr::SharingService service {serviceName, supportedFormats, std::move(onOpenFile)};
    service.start();
 }
 ```
-
 For more usage examples see [samples](/samples/)
+
+Handler provided to `SharingService` constructor must have following signature `void (const std::string &)`
+
+`SharingService` class provides only one member function `SharingService::start()` which:
+- registers itself on `com.system.sharing` as service able to open files of `supportedFormats`;
+- starts service with provided name on DBus with object `/` and one method `"serviceName".OpenFile` implemented as given handler;
+- start polling for incoming calls.
 
 ### Samples
 
